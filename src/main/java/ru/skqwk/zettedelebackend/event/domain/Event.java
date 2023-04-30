@@ -34,15 +34,11 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserAccount user;
-
     private EventType type;
-
     private String id;
     private String parentId;
 
     @Column(name = "payload")
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, String> payload;
-
-
 }
