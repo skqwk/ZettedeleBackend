@@ -23,6 +23,11 @@ import ru.skqwk.zettedelebackend.config.security.jwt.JwtRequestFilter;
 @AllArgsConstructor
 @EnableWebSecurity
 public class WebSecurityConfig {
+    private static final String[] WHITE_LIST = new String[]{
+            "auth",
+            "ping",
+            "register"
+    };
     private final JwtRequestFilter jwtRequestFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final PasswordEncoder passwordEncoder;
@@ -31,12 +36,12 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
                 .csrf()
                 .disable()
+                .cors()
+                .and()
                 .authorizeHttpRequests()
-                .requestMatchers("ping", "register", "auth")
+                .requestMatchers(WHITE_LIST)
                 .permitAll()
                 .anyRequest()
                 .authenticated()

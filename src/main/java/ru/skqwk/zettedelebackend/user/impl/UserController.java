@@ -2,8 +2,8 @@ package ru.skqwk.zettedelebackend.user.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skqwk.zettedelebackend.user.UserAccount;
 import ru.skqwk.zettedelebackend.user.UserApi;
+import ru.skqwk.zettedelebackend.user.domain.UserAccount;
 import ru.skqwk.zettedelebackend.user.dto.UserAccountRs;
 
 /**

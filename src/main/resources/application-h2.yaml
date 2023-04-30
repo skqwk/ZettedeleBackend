@@ -4,7 +4,7 @@ spring:
       mode: never
   datasource:
     password: sa
-    url: "jdbc:h2:./test_db;DB_CLOSE_ON_EXIT=TRUE"
+    url: "jdbc:h2:./zettedele_db;DB_CLOSE_ON_EXIT=TRUE;AUTO_SERVER=TRUE"
     username: test
     driver-class-name: org.h2.Driver
   jpa:

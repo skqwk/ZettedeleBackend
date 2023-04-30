@@ -9,10 +9,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skqwk.zettedelebackend.auth.dto.RegisterRq;
 import ru.skqwk.zettedelebackend.user.LoginConflictException;
-import ru.skqwk.zettedelebackend.user.UserAccount;
 import ru.skqwk.zettedelebackend.user.UserRepo;
-import ru.skqwk.zettedelebackend.user.UserRole;
 import ru.skqwk.zettedelebackend.user.UserService;
+import ru.skqwk.zettedelebackend.user.domain.UserAccount;
+import ru.skqwk.zettedelebackend.user.domain.UserRole;
 
 /**
  * Сервис с реализацией методов по работе с пользователями
@@ -38,21 +38,23 @@ public class UserServiceImpl implements UserService {
      * @throws LoginConflictException Если пользователь с таким login уже существует.
      */
     @Override
-    public void addNewUser(RegisterRq registerRequest) {
+    public UserAccount addNewUser(RegisterRq registerRequest) {
         UserAccount userAccount =
                 UserAccount.builder()
                         .role(UserRole.USER)
                         .login(registerRequest.login())
                         .password(passwordEncoder.encode(registerRequest.password()))
                         .build();
+        UserAccount savedUser;
         try {
-            userRepo.save(userAccount);
+            savedUser = userRepo.save(userAccount);
         } catch (DataIntegrityViolationException ex) {
             log.warn("Attempt registration with existed login = {}", registerRequest.login());
             throw new LoginConflictException(
                     String.format("You can't use login = '%s'", registerRequest.login()));
         }
         log.info("User with login = {} successfully registered", registerRequest.login());
+        return savedUser;
     }
 
     @Override

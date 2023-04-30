@@ -1,4 +1,4 @@
-package ru.skqwk.zettedelebackend.user;
+package ru.skqwk.zettedelebackend.user.domain;
 
 import org.springframework.security.core.userdetails.UserDetails;
 

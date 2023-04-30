@@ -3,12 +3,13 @@ package ru.skqwk.zettedelebackend.user;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import ru.skqwk.zettedelebackend.auth.dto.RegisterRq;
+import ru.skqwk.zettedelebackend.user.domain.UserAccount;
 
 /**
  * Сервис для работы с информацией о пользователях
  */
 public interface UserService extends UserDetailsService {
-    void addNewUser(RegisterRq registerRequest);
+    UserAccount addNewUser(RegisterRq registerRequest);
 
     <T extends UserDetails> T getUserByLogin(String login);
 

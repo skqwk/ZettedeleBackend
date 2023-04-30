@@ -8,16 +8,19 @@ import ru.skqwk.zettedelebackend.auth.AuthService;
 import ru.skqwk.zettedelebackend.auth.dto.AuthRq;
 import ru.skqwk.zettedelebackend.auth.dto.AuthRs;
 import ru.skqwk.zettedelebackend.auth.dto.RegisterRq;
+import ru.skqwk.zettedelebackend.sync.VectorVersionService;
 import ru.skqwk.zettedelebackend.user.UserService;
+import ru.skqwk.zettedelebackend.user.domain.UserAccount;
 
 /**
  * Реализация контроллера для регистрации/авторизации
  */
 @RestController
 @AllArgsConstructor
-public class AuthControllerImpl implements AuthApi {
+public class AuthController implements AuthApi {
     private final AuthService authService;
     private final UserService userService;
+    private final VectorVersionService vectorVersionService;
 
     @Override
     public AuthRs auth(AuthRq authRq) {
@@ -29,7 +32,8 @@ public class AuthControllerImpl implements AuthApi {
 
     @Override
     public ResponseEntity<?> register(RegisterRq registerRq) {
-        userService.addNewUser(registerRq);
+        UserAccount userAccount = userService.addNewUser(registerRq);
+        vectorVersionService.createNewVector(userAccount);
         return ResponseEntity.ok().build();
     }
 }

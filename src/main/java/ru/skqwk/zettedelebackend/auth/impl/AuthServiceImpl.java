@@ -8,8 +8,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 import ru.skqwk.zettedelebackend.auth.AuthService;
 import ru.skqwk.zettedelebackend.config.security.jwt.JwtTokenUtil;
-import ru.skqwk.zettedelebackend.user.UserAccount;
 import ru.skqwk.zettedelebackend.user.UserService;
+import ru.skqwk.zettedelebackend.user.domain.UserAccount;
 
 import java.time.Instant;
 
