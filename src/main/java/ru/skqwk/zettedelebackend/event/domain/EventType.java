@@ -15,4 +15,7 @@ public enum EventType {
     CREATE_PARAGRAPH,
     REMOVE_PARAGRAPH,
     UPDATE_PARAGRAPH,
+
+    ADD_LINK_NOTE,
+    REMOVE_LINK_NOTE,
 }
