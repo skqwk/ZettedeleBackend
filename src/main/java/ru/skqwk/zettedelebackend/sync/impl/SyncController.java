@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skqwk.zettedelebackend.event.EventService;
 import ru.skqwk.zettedelebackend.event.domain.Event;
 import ru.skqwk.zettedelebackend.event.domain.EventType;
+import ru.skqwk.zettedelebackend.event.mapper.EventMapper;
 import ru.skqwk.zettedelebackend.sync.SyncApi;
 import ru.skqwk.zettedelebackend.sync.VectorVersionService;
 import ru.skqwk.zettedelebackend.sync.clock.HLC;
@@ -19,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static ru.skqwk.zettedelebackend.event.mapper.EventMapper.*;
+import static ru.skqwk.zettedelebackend.event.mapper.EventMapper.mapEventsDtoToDomain;
 
 /**
  * Реализация контроллера для синхронизации
@@ -78,37 +82,7 @@ public class SyncController implements SyncApi {
         return ResponseEntity.ok().build();
     }
 
-    private List<Event> mapEventsDtoToDomain(List<EventDto> events) {
-        return events.stream()
-                .map(this::mapEventDtoTDomain)
-                .collect(Collectors.toList());
-    }
 
-    private Event mapEventDtoTDomain(EventDto event) {
-        return Event.builder()
-                .happenAt(event.getHappenAt())
-                .payload(event.getPayload())
-                .parentId(event.getParentId())
-                .id(event.getId())
-                .type(EventType.valueOf(event.getEvent()))
-                .build();
-    }
-
-    private List<EventDto> mapEventsDomainToDto(List<Event> events) {
-        return events.stream()
-                .map(this::mapEventDomainToDto)
-                .collect(Collectors.toList());
-    }
-
-    private EventDto mapEventDomainToDto(Event event) {
-        return EventDto.builder()
-                .happenAt(event.getHappenAt())
-                .event(event.getType().toString())
-                .payload(event.getPayload())
-                .id(event.getId())
-                .parentId(event.getParentId())
-                .build();
-    }
 
     private Map<UUID, HybridTimestamp> mapVectorVersionDtoToDomain(Map<String, String> vectorVersionDto) {
         return vectorVersionDto.entrySet().stream()

@@ -2,6 +2,7 @@ package ru.skqwk.zettedelebackend.event.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.skqwk.zettedelebackend.event.EventRepo;
 import ru.skqwk.zettedelebackend.event.EventService;
@@ -47,5 +48,22 @@ public class EventServiceImpl implements EventService {
     public Event saveEvent(UserAccount user, Event event) {
         event.setUser(user);
         return eventRepo.save(event);
+    }
+
+    @Override
+    public List<Event> getAllEvents(UserAccount userAccount) {
+        return eventRepo.findAllByUser(userAccount);
+    }
+
+    @Override
+    public void saveAllEvents(UserAccount userAccount, List<Event> events) {
+        events.forEach(e -> e.setUser(userAccount));
+        for (Event event : events) {
+            try {
+                eventRepo.save(event);
+            } catch (DataIntegrityViolationException e) {
+                log.info("This event {} already saved", event.getHappenAt());
+            }
+        }
     }
 }

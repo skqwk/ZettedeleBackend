@@ -13,5 +13,10 @@ import java.util.UUID;
  */
 public interface EventService {
     List<Event> loadMissingEvents(UserAccount userAccount, Map<UUID, HybridTimestamp> diffVectorVersion);
+
     Event saveEvent(UserAccount userAccount, Event event);
+
+    List<Event> getAllEvents(UserAccount userAccount);
+
+    void saveAllEvents(UserAccount userAccount, List<Event> events);
 }
