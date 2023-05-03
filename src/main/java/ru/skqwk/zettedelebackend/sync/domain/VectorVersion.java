@@ -15,10 +15,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import ru.skqwk.zettedelebackend.sync.clock.HybridTimestamp;
 import ru.skqwk.zettedelebackend.user.domain.UserAccount;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Вектор версий
@@ -42,4 +44,18 @@ public class VectorVersion {
     @OneToOne
     @JoinColumn(name = "user_id")
     private UserAccount user;
+
+    public static Map<UUID, HybridTimestamp> toDomain(Map<String, String> vectorVersionDto) {
+        return vectorVersionDto.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> UUID.fromString(e.getKey()),
+                        e -> HybridTimestamp.parse(e.getValue())));
+    }
+
+    public static Map<String, String> toDto(Map<UUID, HybridTimestamp> vectorVersionDomain) {
+        return vectorVersionDomain.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().toString(),
+                        e -> e.getValue().toString()));
+    }
 }

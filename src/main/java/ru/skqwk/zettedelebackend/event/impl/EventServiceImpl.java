@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 import ru.skqwk.zettedelebackend.event.EventRepo;
 import ru.skqwk.zettedelebackend.event.EventService;
 import ru.skqwk.zettedelebackend.event.domain.Event;
+import ru.skqwk.zettedelebackend.sync.VectorVersionService;
+import ru.skqwk.zettedelebackend.sync.clock.HLC;
 import ru.skqwk.zettedelebackend.sync.clock.HybridTimestamp;
+import ru.skqwk.zettedelebackend.sync.domain.VectorVersion;
 import ru.skqwk.zettedelebackend.user.domain.UserAccount;
 
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
     private final EventRepo eventRepo;
+    private final VectorVersionService vectorVersionService;
 
     @Override
     public List<Event> loadMissingEvents(UserAccount userAccount, Map<UUID, HybridTimestamp> diffVectorVersion) {
@@ -45,9 +49,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event saveEvent(UserAccount user, Event event) {
+    public void saveEvent(UserAccount user, Event event) {
         event.setUser(user);
-        return eventRepo.save(event);
+        try {
+            eventRepo.save(event);
+        } catch (DataIntegrityViolationException ex) {
+            log.info("Event happenedAt = {} already saved", event.getHappenAt());
+        }
     }
 
     @Override
@@ -57,13 +65,18 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void saveAllEvents(UserAccount userAccount, List<Event> events) {
-        events.forEach(e -> e.setUser(userAccount));
+        VectorVersion vector = vectorVersionService.findVectorVersionByUser(userAccount);
+        Map<UUID, HybridTimestamp> vectorVersion = VectorVersion.toDomain(vector.getVector());
+
+        HybridTimestamp serverLatestTimestamp = vectorVersion.get(userAccount.getId());
+        HLC hlc = new HLC(serverLatestTimestamp.getWallClockTime(), serverLatestTimestamp.getNodeId());
         for (Event event : events) {
-            try {
-                eventRepo.save(event);
-            } catch (DataIntegrityViolationException e) {
-                log.info("This event {} already saved", event.getHappenAt());
-            }
+            HybridTimestamp remoteTimestamp = HybridTimestamp.parse(event.getHappenAt());
+            saveEvent(userAccount, event);
+            hlc.tick(remoteTimestamp);
         }
+        HybridTimestamp latestTime = hlc.getLatestTime();
+        vectorVersion.put(userAccount.getId(), latestTime);
+        vectorVersionService.updateVectorVersion(vector, vectorVersion);
     }
 }

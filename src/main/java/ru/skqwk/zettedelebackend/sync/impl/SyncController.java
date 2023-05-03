@@ -38,9 +38,9 @@ public class SyncController implements SyncApi {
 
         VectorVersion local = vectorVersionService.findVectorVersionByUser(userAccount);
 
-        Map<UUID, HybridTimestamp> localVectorVersion = mapVectorVersionDtoToDomain(local.getVector());
+        Map<UUID, HybridTimestamp> localVectorVersion = VectorVersion.toDomain(local.getVector());
 
-        Map<UUID, HybridTimestamp> remoteVectorVersion = mapVectorVersionDtoToDomain(vectorVersionDto);
+        Map<UUID, HybridTimestamp> remoteVectorVersion = VectorVersion.toDomain(vectorVersionDto);
         Map<UUID, HybridTimestamp> diff = vectorVersionService.diffVectorVersion(localVectorVersion, remoteVectorVersion);
 
         List<Event> events = eventService.loadMissingEvents(userAccount, diff);
@@ -52,49 +52,14 @@ public class SyncController implements SyncApi {
 
         return SyncRs.builder()
                 .events(mapEventsDomainToDto(events))
-                .vectorVersion(mapVectorVersionDomainToDto(localVectorVersion))
+                .vectorVersion(VectorVersion.toDto(localVectorVersion))
                 .build();
-    }
-
-    private Map<UUID, HybridTimestamp> fromString(Map<String, String> vector) {
-        return vector.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> UUID.fromString(e.getKey()),
-                        e -> HybridTimestamp.parse(e.getValue())));
     }
 
     @Override
     public ResponseEntity<?> share(UserAccount userAccount, List<EventDto> eventsDto) {
         List<Event> events = mapEventsDtoToDomain(eventsDto);
-        VectorVersion vector = vectorVersionService.findVectorVersionByUser(userAccount);
-        Map<UUID, HybridTimestamp> vectorVersion = fromString(vector.getVector());
-
-        HybridTimestamp serverLatestTimestamp = vectorVersion.get(userAccount.getId());
-        HLC hlc = new HLC(serverLatestTimestamp.getWallClockTime(), serverLatestTimestamp.getNodeId());
-        for (Event event : events) {
-            HybridTimestamp remoteTimestamp = HybridTimestamp.parse(event.getHappenAt());
-            eventService.saveEvent(userAccount, event);
-            hlc.tick(remoteTimestamp);
-        }
-        HybridTimestamp latestTime = hlc.getLatestTime();
-        vectorVersion.put(userAccount.getId(), latestTime);
-        vectorVersionService.updateVectorVersion(vector, vectorVersion);
+        eventService.saveAllEvents(userAccount, events);
         return ResponseEntity.ok().build();
-    }
-
-
-
-    private Map<UUID, HybridTimestamp> mapVectorVersionDtoToDomain(Map<String, String> vectorVersionDto) {
-        return vectorVersionDto.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> UUID.fromString(e.getKey()),
-                        e -> HybridTimestamp.parse(e.getValue())));
-    }
-
-    private Map<String, String> mapVectorVersionDomainToDto(Map<UUID, HybridTimestamp> vectorVersionDomain) {
-        return vectorVersionDomain.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey().toString(),
-                        e -> e.getValue().toString()));
     }
 }
