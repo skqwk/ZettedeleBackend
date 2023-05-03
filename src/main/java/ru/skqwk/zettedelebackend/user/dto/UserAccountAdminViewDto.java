@@ -6,14 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Тело ответа с информацией о пользователе
+ * DTO для представления данных, просматриваемых администратором
  */
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAccountRs {
+public class UserAccountAdminViewDto {
     private String login;
+    private String visibility;
     private String lastAuth;
-    private String role;
 }

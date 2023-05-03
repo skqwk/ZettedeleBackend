@@ -6,13 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Тело ответа после авторизации
+ * Тело ответа для получения идентификатора узла
  */
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthRs {
-    private String authToken;
-    private String role;
+public class NodeRs {
+    String nodeId;
 }

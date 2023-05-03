@@ -7,6 +7,7 @@ import ru.skqwk.zettedelebackend.auth.AuthApi;
 import ru.skqwk.zettedelebackend.auth.AuthService;
 import ru.skqwk.zettedelebackend.auth.dto.AuthRq;
 import ru.skqwk.zettedelebackend.auth.dto.AuthRs;
+import ru.skqwk.zettedelebackend.auth.dto.NodeRs;
 import ru.skqwk.zettedelebackend.auth.dto.RegisterRq;
 import ru.skqwk.zettedelebackend.sync.VectorVersionService;
 import ru.skqwk.zettedelebackend.user.UserService;
@@ -24,10 +25,7 @@ public class AuthController implements AuthApi {
 
     @Override
     public AuthRs auth(AuthRq authRq) {
-        String authToken = authService.authenticate(authRq.login(), authRq.password());
-        return AuthRs.builder()
-                .authToken(authToken)
-                .build();
+        return authService.authenticate(authRq.login(), authRq.password());
     }
 
     @Override
@@ -35,5 +33,12 @@ public class AuthController implements AuthApi {
         UserAccount userAccount = userService.addNewUser(registerRq);
         vectorVersionService.createNewVector(userAccount);
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public NodeRs node(UserAccount userAccount) {
+        return NodeRs.builder()
+                .nodeId(userAccount.getId().toString())
+                .build();
     }
 }

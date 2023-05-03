@@ -7,6 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import ru.skqwk.zettedelebackend.auth.AuthService;
+import ru.skqwk.zettedelebackend.auth.dto.AuthRs;
 import ru.skqwk.zettedelebackend.config.security.jwt.JwtTokenUtil;
 import ru.skqwk.zettedelebackend.user.UserService;
 import ru.skqwk.zettedelebackend.user.domain.UserAccount;
@@ -25,7 +26,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public String authenticate(String login, String password) {
+    public AuthRs authenticate(String login, String password) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(login, password);
         try {
             authManager.authenticate(token);
@@ -35,6 +36,9 @@ public class AuthServiceImpl implements AuthService {
         UserAccount userAccount = userService.getUserByLogin(login);
         userAccount.setLastAuth(Instant.now());
         userService.saveUser(userAccount);
-        return jwtTokenUtil.generateToken(userAccount);
+        return AuthRs.builder()
+                .role(userAccount.getRole().toString())
+                .authToken(jwtTokenUtil.generateToken(userAccount))
+                .build();
     }
 }

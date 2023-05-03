@@ -11,7 +11,7 @@ import java.util.List;
  **/
 public enum UserRole {
     USER,
-    MANAGER;
+    ADMIN;
 
     public List<SimpleGrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(String.format("ROLE_%s", this.name())));

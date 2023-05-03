@@ -2,6 +2,8 @@ package ru.skqwk.zettedelebackend.event.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -34,6 +36,8 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserAccount user;
+
+    @Enumerated(EnumType.STRING)
     private EventType type;
     private String id;
     private String parentId;

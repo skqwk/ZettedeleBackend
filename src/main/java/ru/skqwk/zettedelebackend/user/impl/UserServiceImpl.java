@@ -12,7 +12,12 @@ import ru.skqwk.zettedelebackend.user.LoginConflictException;
 import ru.skqwk.zettedelebackend.user.UserRepo;
 import ru.skqwk.zettedelebackend.user.UserService;
 import ru.skqwk.zettedelebackend.user.domain.UserAccount;
+import ru.skqwk.zettedelebackend.user.domain.UserAccountVisibility;
 import ru.skqwk.zettedelebackend.user.domain.UserRole;
+
+import java.util.List;
+
+import static ru.skqwk.zettedelebackend.user.domain.UserAccountVisibility.*;
 
 /**
  * Сервис с реализацией методов по работе с пользователями
@@ -42,6 +47,7 @@ public class UserServiceImpl implements UserService {
         UserAccount userAccount =
                 UserAccount.builder()
                         .role(UserRole.USER)
+                        .visibility(PUBLIC)
                         .login(registerRequest.login())
                         .password(passwordEncoder.encode(registerRequest.password()))
                         .build();
@@ -66,5 +72,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(UserAccount userAccount) {
         userRepo.save(userAccount);
+    }
+
+    @Override
+    public List<UserAccount> getAllUsers() {
+        return userRepo.findAll();
     }
 }
