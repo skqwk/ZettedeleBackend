@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import ru.skqwk.zettedelebackend.user.UserRepo;
 import ru.skqwk.zettedelebackend.user.domain.UserAccount;
 import ru.skqwk.zettedelebackend.user.domain.UserAccountVisibility;
+import ru.skqwk.zettedelebackend.user.domain.UserRole;
 
 import java.util.UUID;
 
@@ -40,6 +41,7 @@ public class AuthInit implements CommandLineRunner {
         log.info("{} is not present", ADMIN);
         userRepo.save(UserAccount.builder()
                 .login(ADMIN)
+                .role(UserRole.ADMIN)
                 .password(passwordEncoder.encode(ADMIN))
                 .visibility(PRIVATE)
                 .build());
