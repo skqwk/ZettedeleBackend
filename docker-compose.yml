@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+  zettedele-backend:
+    container_name: zettedele-backend
+    build: .
+    environment:
+      SPRING_PROFILES_ACTIVE: ${ACTIVE_PROFILES}
+    ports:
+      - '${BACKEND_PORT}:${BACKEND_PORT}'
