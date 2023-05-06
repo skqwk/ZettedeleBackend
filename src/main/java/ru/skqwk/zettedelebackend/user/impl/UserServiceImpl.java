@@ -78,4 +78,11 @@ public class UserServiceImpl implements UserService {
     public List<UserAccount> getAllUsers() {
         return userRepo.findAll();
     }
+
+    @Override
+    public void changeVisibility(UserAccount userAccount, Boolean isVisible) {
+        UserAccountVisibility visibility = UserAccountVisibility.ofRequirement(isVisible);
+        userAccount.setVisibility(visibility);
+        userRepo.save(userAccount);
+    }
 }

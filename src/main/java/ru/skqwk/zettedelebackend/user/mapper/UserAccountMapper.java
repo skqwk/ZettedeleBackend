@@ -6,6 +6,8 @@ import ru.skqwk.zettedelebackend.user.dto.UserAccountAdminViewDto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.skqwk.zettedelebackend.util.Formatter.format;
+
 /**
  * Маппер для пользовательских данных
  */
@@ -14,7 +16,8 @@ public class UserAccountMapper {
         return UserAccountAdminViewDto.builder()
                 .visibility(userAccount.getVisibility().toString())
                 .login(userAccount.getLogin())
-                .lastAuth(userAccount.getLastAuth().toString())
+                .lastAuth(format(userAccount.getLastAuth()))
+                .role(userAccount.getRole().toString())
                 .build();
     }
 

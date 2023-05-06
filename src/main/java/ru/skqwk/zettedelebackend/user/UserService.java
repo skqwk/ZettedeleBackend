@@ -18,4 +18,6 @@ public interface UserService extends UserDetailsService {
     void saveUser(UserAccount userAccount);
 
     List<UserAccount> getAllUsers();
+
+    void changeVisibility(UserAccount userAccount, Boolean isVisible);
 }
