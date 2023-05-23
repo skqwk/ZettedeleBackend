@@ -1,0 +1,4 @@
+jwt:
+  secretKey: "zettedelebackendsecretkeyzettedelebackendsecretkey"
+  tokenPrefix: ""
+  tokenExpirationAfterDays: 14
