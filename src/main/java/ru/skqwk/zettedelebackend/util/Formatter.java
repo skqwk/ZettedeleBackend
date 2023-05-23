@@ -3,6 +3,7 @@ package ru.skqwk.zettedelebackend.util;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 /**
  * Вспомогательный класс для форматирования дат
@@ -13,6 +14,8 @@ public class Formatter {
             .withZone(ZoneId.systemDefault());
 
     public static String format(Instant instant) {
-        return formatter.format(instant);
+        return Optional.ofNullable(instant)
+                .map(formatter::format)
+                .orElse(PATTERN_FORMAT);
     }
 }
