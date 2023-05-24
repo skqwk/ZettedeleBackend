@@ -43,7 +43,7 @@ public class EventServiceImpl implements EventService {
                 })
                 .collect(Collectors.toList());
 
-        log.info("Load {} events for user with id = {}", missingEvents.size(), userAccount.getId());
+        log.info("Загрузка {} событий для пользователя {}", missingEvents.size(), userAccount.getLogin());
 
         return missingEvents;
     }
@@ -54,7 +54,7 @@ public class EventServiceImpl implements EventService {
         try {
             eventRepo.save(event);
         } catch (DataIntegrityViolationException ex) {
-            log.info("Event happenedAt = {} already saved", event.getHappenAt());
+            log.info("Событие с happenedAt = {} уже сохранено", event.getHappenAt());
         }
     }
 
