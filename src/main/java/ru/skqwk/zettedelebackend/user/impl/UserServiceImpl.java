@@ -55,11 +55,11 @@ public class UserServiceImpl implements UserService {
         try {
             savedUser = userRepo.save(userAccount);
         } catch (DataIntegrityViolationException ex) {
-            log.warn("Attempt registration with existed login = {}", registerRequest.login());
+            log.warn("Попытка регистрации с существующим логином = {}", registerRequest.login());
             throw new LoginConflictException(
-                    String.format("You can't use login = '%s'", registerRequest.login()));
+                    String.format("Логин '%s' уже используется", registerRequest.login()));
         }
-        log.info("User with login = {} successfully registered", registerRequest.login());
+        log.info("Пользователь с логином = {} успешно зарегистрировался", registerRequest.login());
         return savedUser;
     }
 

@@ -2,6 +2,7 @@ package ru.skqwk.zettedelebackend.auth.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             authManager.authenticate(token);
         } catch (BadCredentialsException ex) {
-            log.warn("User with login = {} can't auth", login);
+            throw new AuthenticationCredentialsNotFoundException(String.format("User with login = %s can't auth", login));
         }
         UserAccount userAccount = userService.getUserByLogin(login);
         userAccount.setLastAuth(Instant.now());
